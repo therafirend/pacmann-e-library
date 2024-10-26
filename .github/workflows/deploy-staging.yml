@@ -1,0 +1,56 @@
+name: Deploy Staging 🚀
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  deploy-to-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # Jalankan script deployment di server staging menggunakan SSH
+      - name: Run deployment script on staging server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.STAGING_SERVER_HOST }}
+          username: ${{ secrets.STAGING_SERVER_USER }}
+          key: ${{ secrets.STAGING_SERVER_SSH_KEY }}
+          port: ${{ secrets.STAGING_SERVER_PORT }}
+          script: |
+            echo "Starting deployment..."
+            
+            # Check if APP_STG_PATH exists
+            if [ -d "${{ secrets.APP_STG_PATH }}" ]; then
+              echo "Directory exists, updating existing deployment..."
+              cd ${{ secrets.APP_STG_PATH }}
+              sudo docker compose down pacmusic-stg
+              git pull origin main
+            else
+              echo "Directory doesn't exist, performing fresh clone..."
+              ssh-keyscan github.com > ~/.ssh/known_hosts
+              git clone ${{ secrets.GIT_URL }} ${{ secrets.APP_STG_PATH }}
+              cd ${{ secrets.APP_STG_PATH }}
+            fi
+            
+            # Generate .env file with required configurations
+            echo "Generating .env file..."
+            echo "APP_STG_PORT=${{ secrets.APP_STG_PORT }}" > .env
+            echo "MINIO_STG_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" >> .env
+            echo "MINIO_STG_ACCESS_KEY=${{ secrets.MINIO_STG_ACCESS_KEY }}" >> .env
+            echo "MINIO_STG_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
+            
+            # Start the application
+            echo "Starting application..."
+            sudo docker compose up --build --detach pacmusic-stg
+            
+            echo "Deployment completed."
+            
+      # Test application endpoint
+      - name: Test application endpoint
+        run: |
+          sleep 10
+          curl -f ${{ secrets.STAGING_APP_URL }}
