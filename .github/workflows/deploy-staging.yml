@@ -12,6 +12,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         
+      # Setup SSH key ED25519
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY_STAGING }}" > ~/.ssh/id_ed25519
+          chmod 700 ~/.ssh
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_HOST_STAGING }} >> ~/.ssh/known_hosts
+
+      # Debug SSH connection
+      - name: Test SSH connection
+        run: ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER_NAME_STAGING }}@${{ secrets.SSH_HOST_STAGING }} "echo 'SSH connection test'"
+                
       # Jalankan script deployment di server staging menggunakan SSH
       - name: Run deployment script on staging server
         uses: appleboy/ssh-action@v0.1.7
