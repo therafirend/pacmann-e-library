@@ -46,8 +46,10 @@ jobs:
       - name: Install testing requirements
         run: pip install -r test/requirements.txt
 
-      - name: List ChromeDriver directory
-        run: ls -l /home/runner/.wdm/drivers/chromedriver/linux64/130.0.6723.69/
+      - name: Install Google Chrome
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
       # Run tests
       - name: Run tests
