@@ -14,7 +14,7 @@ jobs:
         
       # Jalankan script deployment di server staging menggunakan SSH
       - name: Run deployment script on staging server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST_STAGING }}
           username: ${{ secrets.SSH_USER_NAME_STAGING }}
