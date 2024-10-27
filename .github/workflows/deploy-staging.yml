@@ -19,21 +19,21 @@ jobs:
           host: ${{ secrets.SSH_HOST_STAGING }}
           username: ${{ secrets.SSH_USER_NAME_STAGING }}
           key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
-          port: ${{ secrets.SSH_HOST_STAGING_PORT }}
+          envs: APP_STG_PATH
           script: |
             echo "Starting deployment..."
             
             # Check if APP_STG_PATH exists
-            if [ -d "${{ secrets.APP_STG_PATH }}" ]; then
+            if [ -d "${{ APP_STG_PATH }}" ]; then
               echo "Directory exists, updating existing deployment..."
-              cd ${{ secrets.APP_STG_PATH }}
+              cd ${{ APP_STG_PATH }}
               sudo docker compose down pacmusic-stg
               git pull origin main
             else
               echo "Directory doesn't exist, performing fresh clone..."
               ssh-keyscan github.com > ~/.ssh/known_hosts
-              git clone ${{ secrets.GIT_URL }} ${{ secrets.APP_STG_PATH }}
-              cd ${{ secrets.APP_STG_PATH }}
+              git clone ${{ secrets.GIT_URL }} ${{ APP_STG_PATH }}
+              cd ${{ APP_STG_PATH }}
             fi
             
             # Generate .env file with required configurations
