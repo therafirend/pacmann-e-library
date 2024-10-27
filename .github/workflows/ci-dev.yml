@@ -47,6 +47,4 @@ jobs:
           pip install -r test/requirements.txt
 
       - name: Run tests
-        env:
-          DISPLAY: ":99.0"
         run: python3 test/test.py
