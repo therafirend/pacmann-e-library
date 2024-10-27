@@ -8,10 +8,6 @@ jobs:
     environment: staging
     
     steps:
-      # Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
       # Jalankan script deployment di server staging menggunakan SSH
       - name: Run deployment script on staging server
         uses: appleboy/ssh-action@v1.1.0
