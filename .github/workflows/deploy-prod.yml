@@ -31,15 +31,6 @@ jobs:
               git clone ${{ secrets.GIT_URL }} ${{ vars.APP_PROD_PATH }}
               cd ${{ vars.APP_PROD_PATH }}
             fi
-            
-            # Generate .env file with required configurations
-            echo "Generating .env file..."
-            echo "APP_PROD_PORT=${{ secrets.APP_PROD_PORT }}" > .env
-            echo "MINIO_PROD_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" >> .env
-            echo "MINIO_PROD_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
-            echo "MINIO_PROD_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
-            echo "APP_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/pacmusic" >> .env
-            echo "APP_TAG=${{ github.event.release.tag_name }}" >> .env
 
             # Docker Login
             echo "Logging in to Docker..."
@@ -49,6 +40,15 @@ jobs:
             echo "Pulling Docker image..."
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pacmusic:${{ github.event.release.tag_name }}
             
+
+            # Generate .env file with required configurations
+            echo "Generating .env file..."
+            echo "APP_PROD_PORT=${{ secrets.APP_PROD_PORT }}" > .env
+            echo "MINIO_PROD_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" >> .env
+            echo "MINIO_PROD_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
+            echo "MINIO_PROD_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
+            echo "APP_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/pacmusic" >> .env
+            echo "APP_TAG=${{ github.event.release.tag_name }}" >> .env
 
             # Start the application
             echo "Starting production application..."
