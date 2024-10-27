@@ -1,0 +1,54 @@
+name: Deploy Production 🚀
+on:
+  release:
+    types: [published, edited]
+jobs:
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      # Jalankan script deployment di server production menggunakan SSH
+      - name: Run deployment script on production server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SSH_HOST_PRODUCTION }}
+          username: ${{ secrets.SSH_USER_NAME_PRODUCTION }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_PRODUCTION }}
+          port: ${{ secrets.SSH_HOST_PRODUCTION_PORT }}
+          debug: true
+          script: |
+            echo "Starting production deployment..."
+            # Check if APP_PROD_PATH exists
+            if [ -d "${{ vars.APP_PROD_PATH }}" ]; then
+              echo "Directory exists, updating existing deployment..."
+              cd ${{ vars.APP_PROD_PATH }}
+              sudo docker compose down pacmusic-prod
+              git pull origin main
+            else
+              echo "Directory doesn't exist, performing fresh clone..."
+              ssh-keyscan github.com > ~/.ssh/known_hosts
+              git clone ${{ secrets.GIT_URL }} ${{ vars.APP_PROD_PATH }}
+              cd ${{ vars.APP_PROD_PATH }}
+            fi
+            
+            # Generate .env file with required configurations
+            echo "Generating .env file..."
+            echo "APP_PROD_PORT=${{ secrets.APP_PROD_PORT }}" > .env
+            echo "MINIO_PROD_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" >> .env
+            echo "MINIO_PROD_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
+            echo "MINIO_PROD_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
+            echo "APP_IMAGE=therafirends/pacmusic" >> .env
+            echo "APP_TAG=${{ secrets.APP_TAG }}" >> .env
+            
+            # Start the application
+            echo "Starting production application..."
+            sudo docker compose up --build --detach pacmusic-prod
+            
+            echo "Production deployment completed."
+            
+      # Test production application endpoint
+      - name: Test production application endpoint
+        run: |
+          sleep 10
+          curl -f ${{ secrets.PROD_URL }}
