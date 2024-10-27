@@ -39,7 +39,7 @@ jobs:
       # Test application endpoint
       - name: Test application endpoint
         run: |
-          sleep 10
+          sleep 20
           curl http://localhost:5000
 
       # Install testing requirements
