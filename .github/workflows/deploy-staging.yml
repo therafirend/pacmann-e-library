@@ -11,6 +11,9 @@ jobs:
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Set permissions for SSH key
+        run: chmod 600 ~/.ssh/id_rsa
                
       # Jalankan script deployment di server staging menggunakan SSH
       - name: Run deployment script on staging server
