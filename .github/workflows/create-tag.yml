@@ -26,12 +26,14 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        
       - name: Debugging
         run: |
           echo "Current directory:"
           pwd
           echo "Listing files:"
           ls -la ./app      
+          
       - name: Build and Push Docker images
         uses: docker/build-push-action@v5
         with:
