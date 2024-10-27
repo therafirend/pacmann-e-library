@@ -16,10 +16,10 @@ jobs:
       - name: Run deployment script on staging server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.STAGING_SERVER_HOST }}
-          username: ${{ secrets.STAGING_SERVER_USER }}
-          key: ${{ secrets.STAGING_SERVER_SSH_KEY }}
-          port: ${{ secrets.STAGING_SERVER_PORT }}
+          host: ${{ secrets.SSH_HOST_STAGING }}
+          username: ${{ secrets.SSH_USER_NAME_STAGING }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+          port: ${{ secrets.SSH_HOST_STAGING_PORT }}
           script: |
             echo "Starting deployment..."
             
@@ -53,4 +53,4 @@ jobs:
       - name: Test application endpoint
         run: |
           sleep 10
-          curl -f ${{ secrets.STAGING_APP_URL }}
+          curl -f ${{ secrets.STG_URL }}
