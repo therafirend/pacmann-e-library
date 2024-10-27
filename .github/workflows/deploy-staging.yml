@@ -8,7 +8,7 @@ jobs:
     environment: staging
     
     steps:
-      # Jalankan script deployment di server staging menggunakan SSH DUlu
+      # Jalankan script deployment di server staging menggunakan SSH
       - name: Run deployment script on staging server
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -19,7 +19,30 @@ jobs:
           debug: true
           script: |
             echo "Starting deployment..."
+            # Check if APP_STG_PATH exists
+            if [ -d "${{ vars.APP_STG_PATH }}" ]; then
+              echo "Directory exists, updating existing deployment..."
+              cd ${{ vars.APP_STG_PATH }}
+              sudo docker compose down pacmusic-stg
+              git pull origin main
+            else
+              echo "Directory doesn't exist, performing fresh clone..."
+              ssh-keyscan github.com > ~/.ssh/known_hosts
+              git clone ${{ secrets.GIT_URL }} ${{ vars.APP_STG_PATH }}
+              cd ${{ vars.APP_STG_PATH }}
+            fi
             
+            
+            # Generate .env file with required configurations
+            echo "Generating .env file..."
+            echo "APP_STG_PORT=${{ secrets.APP_STG_PORT }}" > .env
+            echo "MINIO_STG_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" >> .env
+            echo "MINIO_STG_ACCESS_KEY=${{ secrets.MINIO_STG_ACCESS_KEY }}" >> .env
+            echo "MINIO_STG_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
+            
+            # Start the application
+            echo "Starting application..."
+            sudo docker compose up --build --detach pacmusic-stg             
             
             echo "Deployment completed."
             
