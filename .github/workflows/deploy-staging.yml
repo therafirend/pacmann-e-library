@@ -19,6 +19,7 @@ jobs:
           host: ${{ secrets.SSH_HOST_STAGING }}
           username: ${{ secrets.SSH_USER_NAME_STAGING }}
           key: ${{ secrets.SSH_PRIVATE_KEY_STAGING }}
+          port: ${{ secrets.SSH_HOST_STAGING_PORT }}
           debug: true
           script: |
             echo "Starting deployment..."
