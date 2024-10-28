@@ -16,7 +16,7 @@ class TestMusicPlayer(unittest.TestCase):
         chrome_options.add_argument("--headless")  # Run without a GUI
         chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
 
-        service = Service(ChromeDriverManager().install())
+        service = Service(ChromeDriverManager().install()) #test
         self.driver = webdriver.Chrome(service=service, options=chrome_options)
         
         self.driver.get("http://localhost:5000")
