@@ -35,15 +35,15 @@ jobs:
             
             # Generate .env file with required configurations
             echo "Generating .env file..."
-            echo "APP_STG_PORT=${{ secrets.APP_STG_PORT }}" > .env
+            echo "APP_STG_PORT_1=${{ secrets.APP_STG_PORT_1 }}" > .env
+            echo "APP_STG_PORT_2=${{ secrets.APP_STG_PORT_2 }}" >> .env            
             echo "MINIO_STG_ENDPOINT=${{ secrets.MINIO_STG_ENDPOINT }}" >> .env
             echo "MINIO_STG_ACCESS_KEY=${{ secrets.MINIO_STG_ACCESS_KEY }}" >> .env
             echo "MINIO_STG_SECRET_KEY=${{ secrets.MINIO_STG_SECRET_KEY }}" >> .env
             
             # Start the application
             echo "Starting application..."
-            sudo docker compose up --build --detach pacmusic-stg             
-            
+            sudo docker compose up --build --detach pacmusic-stg-1 pacmusic-stg-2            
             echo "Deployment completed."
             
       # Test application endpoint
