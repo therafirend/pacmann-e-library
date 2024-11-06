@@ -43,7 +43,8 @@ jobs:
 
             # Generate .env file with required configurations
             echo "Generating .env file..."
-            echo "APP_PROD_PORT=${{ secrets.APP_PROD_PORT }}" > .env
+            echo "APP_PROD_PORT_1=${{ secrets.APP_PROD_PORT_1 }}" > .env
+            echo "APP_PROD_PORT_2=${{ secrets.APP_PROD_PORT_2 }}" > .env
             echo "MINIO_PROD_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" >> .env
             echo "MINIO_PROD_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
             echo "MINIO_PROD_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
@@ -52,7 +53,7 @@ jobs:
 
             # Start the application
             echo "Starting production application..."
-            sudo docker compose up --build --detach pacmusic-prod
+            sudo docker compose up --build --detach pacmusic-prod-1 pacmusic-prod-2
             
             echo "Production deployment completed."
             
@@ -60,4 +61,5 @@ jobs:
       - name: Test production application endpoint
         run: |
           sleep 10
-          curl -f ${{ secrets.PROD_URL }}
+          curl -f ${{ secrets.PROD_URL_1 }}
+          curl -f ${{ secrets.PROD_URL_2 }}

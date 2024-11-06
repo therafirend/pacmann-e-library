@@ -50,4 +50,5 @@ jobs:
       - name: Test application endpoint
         run: |
           sleep 10
-          curl -f ${{ secrets.STG_URL }}
+          curl -f ${{ secrets.STG_URL_1 }}
+          curl -f ${{ secrets.STG_URL_2 }}
