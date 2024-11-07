@@ -44,7 +44,7 @@ jobs:
             # Generate .env file with required configurations
             echo "Generating .env file..."
             echo "APP_PROD_PORT_1=${{ secrets.APP_PROD_PORT_1 }}" > .env
-            echo "APP_PROD_PORT_2=${{ secrets.APP_PROD_PORT_2 }}" > .env
+            echo "APP_PROD_PORT_2=${{ secrets.APP_PROD_PORT_2 }}" >> .env
             echo "MINIO_PROD_ENDPOINT=${{ secrets.MINIO_PROD_ENDPOINT }}" >> .env
             echo "MINIO_PROD_ACCESS_KEY=${{ secrets.MINIO_PROD_ACCESS_KEY }}" >> .env
             echo "MINIO_PROD_SECRET_KEY=${{ secrets.MINIO_PROD_SECRET_KEY }}" >> .env
