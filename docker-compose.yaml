@@ -2,7 +2,36 @@ version: '3'
 
 services:
 
-# DEV
+  # NGINX (reverse proxy and load balancer)
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # mount NGINX configuration
+      - ./data/certbot/conf:/etc/letsencrypt  # Certbot configuration directory
+      - ./data/certbot/www:/var/www/certbot  # Webroot for Certbot
+    depends_on:
+      - pacmusic-stg-1
+      - pacmusic-stg-2
+      - pacmusic-prod-1
+      - pacmusic-prod-2
+    networks:
+      - pacmusic-network
+
+  # Certbot (to handle SSL certificates)
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - pacmusic-network
+
   pacmusic-dev:
     build:
       context: ./app
@@ -17,7 +46,6 @@ services:
     networks:
       - pacmusic-network
 
-# STG
   pacmusic-stg-1:
     build:
       context: ./app
@@ -46,7 +74,6 @@ services:
     networks:
       - pacmusic-network
 
-# PROD
   pacmusic-prod-1:
     image: "${APP_IMAGE}:${APP_TAG}"
     container_name: pacmusic-prod-1
