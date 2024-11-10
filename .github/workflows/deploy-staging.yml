@@ -23,7 +23,7 @@ jobs:
             if [ -d "${{ vars.APP_STG_PATH }}" ]; then
               echo "Directory exists, updating existing deployment..."
               cd ${{ vars.APP_STG_PATH }}
-              sudo docker compose down pacmusic-stg
+              sudo docker compose down pacmusic-stg-1 pacmusic-stg-2
               git pull origin main
             else
               echo "Directory doesn't exist, performing fresh clone..."
